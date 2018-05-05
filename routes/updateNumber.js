@@ -25,14 +25,8 @@ router.use(function(req, res, next){
       }
     });
 });
-/* GET home page. */
+
 router.post('/:username', function(req, res, next) {
-  // console.log('The name', req.params.username)
-  // if(decoded.role === 'ADMIN' || decoded.username === req.params.username){
-  //     		next();
-  //     	}
-  // // res.render('/layout/' + req.params.username );
-  // res.send('suzess');
 	var token = getCookie(req.headers.cookie, 'access_token');
   	jwt.verify(token, 'iiiConsulting', function(err, decoded) {
       if (err) {
@@ -74,36 +68,25 @@ router.post('/:username', function(req, res, next) {
       			}
       			else {
 
+            dbData.contactNumber = _.without(dbData.contactNumber, req.body.oldContact);
+
       			var newContactInfo = dbData.contactNumber.concat(req.body.contact);
 
       			var obj = _.find(roles,function(role){
   					return role.id===decoded.roleId;
 	  			});
-	      		if (obj.role=== 'ADMIN'){
-					console.log('#######', req.body);
-					if(req.body.makeAdmin){
-						var obj = _.find(roles,function(role){
-							return role.role==="ADMIN";
-						});
-						console.log('#');
-			  		User.update({username: req.params.username}, {$set:{contactNumber:newContactInfo, roleId:obj.id}}, function(err, result){
-							res.status(200).send('success');
-			    	});
-					}
-					else {
-						console.log('###');
+	      		  if (obj.role=== 'ADMIN'){
+                User.update({username: req.params.username}, {$set:{contactNumber:newContactInfo}}, function(err, result){
+                  res.status(200).send('success');
+              });
+              
 
-						User.update({username: req.params.username}, {$set:{contactNumber:newContactInfo}}, function(err, result){
-							res.status(200).send('success');
-					});
-					}
-
-				}
-				else if(decoded.username === req.params.username){
-					User.update({username: decoded.username}, {$set:{contactNumber:newContactInfo}}, function(err, result){
-							res.status(200).send('success');
-					});
-				}
+            }
+            else if(decoded.username === req.params.username){
+              User.update({username: decoded.username}, {$set:{contactNumber:newContactInfo}}, function(err, result){
+                  res.status(200).send('success');
+              });
+        }
 				else 
 					res.status(401).send('Not authorized.');
 			}
@@ -115,33 +98,47 @@ router.post('/:username', function(req, res, next) {
 });
 
 router.delete('/:username', function(req, res, next) {
-  // console.log('The name', req.params.username)
-  // if(decoded.role === 'ADMIN' || decoded.username === req.params.username){
-  //     		next();
-  //     	}
-  // // res.render('/layout/' + req.params.username );
-  // res.send('suzess');
-		console.log('&##########&&&&&&&&');
-
-	var token = getCookie(req.headers.cookie, 'access_token');
-  	jwt.verify(token, 'iiiConsulting', function(err, decoded) {
+  var token = getCookie(req.headers.cookie, 'access_token');
+    jwt.verify(token, 'iiiConsulting', function(err, decoded) {
       if (err) {
         res.status(403).send('Not authenticated.');
       } else {
-      	var obj = _.find(roles,function(role){
-			return role.id===decoded.roleId;
-		});
-		console.log('&&&&&&&&&', obj);
-        if((obj && obj.role === 'ADMIN') || decoded.username === req.params.username){
-        	User.find({username: decoded.username}).remove(function(err, result){
-  				// res.status(200).redirect('/login');
-				res.clearCookie('access_token').status(200).send('successfuly deleted the user');
+        var obj = _.find(roles,function(role){
+          return role.id===decoded.roleId;
+        });
+          var name;
+          if(obj.role=== 'ADMIN'){
+            name = req.params.username;
+          }
+          else {
+            name = decoded.username;
+          }
 
-        	});
-      	}
-      	else 
-        	res.status(401).send('Not authorized.');
-      }
+          User.findOne({username: name}, async function(err, dbData){
+
+            var newContactInfo = _.without(dbData.contactNumber, req.body.contact);
+
+            var obj = _.find(roles,function(role){
+            return role.id===decoded.roleId;
+          });
+            if (obj.role=== 'ADMIN'){
+                User.update({username: req.params.username}, {$set:{contactNumber:newContactInfo}}, function(err, result){
+                  res.status(200).send('success');
+              });
+              
+
+            }
+            else if(decoded.username === req.params.username){
+              User.update({username: decoded.username}, {$set:{contactNumber:newContactInfo}}, function(err, result){
+                  res.status(200).send('success');
+              });
+        }
+        else 
+          res.status(401).send('Not authorized.');
+        
+        })
+        
+    }
     });
 });
 

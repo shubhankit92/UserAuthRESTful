@@ -44,10 +44,10 @@ router.get('/:username', function(req, res, next) {
         if(obj && obj.role === 'ADMIN' || decoded.username === req.params.username){
         	User.findOne({username: decoded.username}, function(err, result){
             if(query.page){
-              res.send(result.contactNumber.slice((query.page-1)*10, (query.page-1)*10 + 10));
+              res.send({pageNumber: query.page,MaxContactNumberPerpage: 10, contactDetails: result.contactNumber.slice((query.page-1)*10, (query.page-1)*10 + 10)});
             }
             else
-              res.send(result.contactNumber.slice(0, 10));
+              res.send({pageNumber: 1,MaxContactNumberPerpage: 10,contactDetails: result.contactNumber.slice(0, 10)});
         	});
       	}
       	else 

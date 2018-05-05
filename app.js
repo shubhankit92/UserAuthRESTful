@@ -15,6 +15,7 @@ var signupRouter = require('./routes/signup');
 var profile = require('./routes/profile');
 var loginUser = require('./routes/loginUser');
 var updateUser = require('./routes/updateUser');
+var updateNumber = require('./routes/updateNumber');
 
 
 
@@ -45,6 +46,7 @@ app.use('/users', usersRouter);
 app.use('/create', createUser);
 app.use('/loginUser', loginUser);
 app.use('/updateUser', updateUser);
+app.use('/updateNumber', updateNumber);
 app.use('/profile', profile);
 
 // catch 404 and forward to error handler
