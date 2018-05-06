@@ -154,4 +154,46 @@ describe('Users', () => {
       });
     });
   });
+  describe('ADMIN CRUD on phone numbers ', () => {
+    it('ADMIN can add other Users phone number', (done) => {
+      let updatedUser = {
+        contact: ["+919999999992"]
+      }
+      chai.request(server)
+      .post('/updateUser/abc')
+      .set('cookie', Admin_access_token)
+      .send(updatedUser)
+      .end((err, res) => {
+        res.should.have.status(200);
+        done();
+      });
+    });
+    it('ADMIN can update other Users phone number', (done) => {
+      let updatedUser = {
+        oldContact: "+919999999992",
+        contact: ["+918888888888"]
+      }
+      chai.request(server)
+      .post('/updateNumber/abc')
+      .set('cookie', Admin_access_token)
+      .send(updatedUser)
+      .end((err, res) => {
+        res.should.have.status(200);
+        done();
+      });
+    });
+    it('ADMIN can delete other Users phone number', (done) => {
+      let updatedUser = {
+        contact: "+918888888888"
+      }
+      chai.request(server)
+      .delete('/updateNumber/abc')
+      .set('cookie', Admin_access_token)
+      .send(updatedUser)
+      .end((err, res) => {
+        res.should.have.status(200);
+        done();
+      });
+    });
+  });
 });
