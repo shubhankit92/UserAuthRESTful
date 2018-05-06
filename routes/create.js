@@ -16,7 +16,7 @@ router.use(function(req, resp, next){
 		}
 		else {
 			bcrypt.genSalt(10, function(err, salt) {
-			    bcrypt.hash("B4c0/\/", salt, function(err, hash) {
+			    bcrypt.hash(userData.password, salt, function(err, hash) {
 			        // Store hash in your password DB.
 			        var num = [];
 

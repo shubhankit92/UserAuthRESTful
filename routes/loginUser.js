@@ -8,22 +8,22 @@ var jwt = require('jsonwebtoken');
 router.use(function(req, resonse, next){
 	var userData = req.body;
 
-	User.findOne({username: userData.username}, function(err, res){
-		console.log('The res is', res);
+	User.findOne({username: userData.username}, function(err, resp){
+		console.log('The res is', resp);
 
 		if(err){
 			resonse.error(err);
 		}
-		if(res){
-			bcrypt.genSalt(10, function(err, salt) {
-			    bcrypt.hash("B4c0/\/", salt, function(err, hash) {
+		if(resp){
+			bcrypt.compare(userData.password, resp.password, function(err, res) {
 				    var num = [];
-				   	if(userData.password = hash){
+				    console.log('The 1', res);
+				   	if(res){
 				   		var obj = {
-				   			username:res.username,
-				   			password:res.password,
-				   			roleId:res.roleId,
-				   			contactNumber:res.contactNumber
+				   			username:resp.username,
+				   			password:resp.password,
+				   			roleId:resp.roleId,
+				   			contactNumber:resp.contactNumber
 				   		}
 				   		var token = jwt.sign(obj, 'iiiConsulting');
 						resonse.cookie('access_token', token, {httpOnly: true}).status(301).redirect('/profile/' + userData.username);
@@ -32,7 +32,7 @@ router.use(function(req, resonse, next){
 				   	else {
 				   		resonse.send('wrong password');
 				   	}
-			    });
+			    
 			});
 		}
 		else {

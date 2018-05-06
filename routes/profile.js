@@ -14,6 +14,7 @@ function getCookie ( src, name ) {
 
 router.use(function(req, res, next){
 	var userData = req.body;
+  console.log('The headers ', req.headers);
 	var token = getCookie(req.headers.cookie, 'access_token');
   	jwt.verify(token, 'iiiConsulting', function(err, decoded) {
       if (err) {
@@ -34,14 +35,24 @@ router.get('/:username', function(req, res, next) {
   var query = require('url').parse(req.url,true).query;
 	var token = getCookie(req.headers.cookie, 'access_token');
   	jwt.verify(token, 'iiiConsulting', function(err, decoded) {
+      console.log('The values are', decoded);
+      console.log('The values are', req.params);
       if (err) {
         res.status(403).send('Not authenticated.');
       } else {
         var obj = _.find(roles,function(role){
           return role.id===decoded.roleId;
         });
-
-        if(obj && obj.role === 'ADMIN' || decoded.username === req.params.username){
+        if(obj && obj.role === 'ADMIN'){
+          User.findOne({username: req.params.username}, function(err, result){
+            if(query.page){
+              res.send({pageNumber: query.page,MaxContactNumberPerpage: 10, contactDetails: result.contactNumber.slice((query.page-1)*10, (query.page-1)*10 + 10)});
+            }
+            else
+              res.send({pageNumber: 1,MaxContactNumberPerpage: 10,contactDetails: result.contactNumber.slice(0, 10)});
+          });
+        }
+        else if(decoded.username === req.params.username){
         	User.findOne({username: decoded.username}, function(err, result){
             if(query.page){
               res.send({pageNumber: query.page,MaxContactNumberPerpage: 10, contactDetails: result.contactNumber.slice((query.page-1)*10, (query.page-1)*10 + 10)});

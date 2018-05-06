@@ -5,7 +5,16 @@ var User = require('../User');
 var roles = require('../role');
 var jwt = require('jsonwebtoken');
 var _ = require('underscore');
-var phone = require('phone');
+// var phone = require('phone');
+function phone (number){
+  if(number[0]=== "+" &&number[1]=== "9" &&number[2]=== "1" ){
+    return false;
+  }
+  else {
+    return true;
+  }
+}
+
 
 function getCookie ( src, name ) {
   var value = "; " + src;
@@ -50,21 +59,22 @@ router.post('/:username', function(req, res, next) {
       				})
       			});
 
-      			var validPhone = await _.find(req.body.contact, async function(contact){
-      				var res = await phone(contact);
-      				console.log('The res is', res);
-      				if(res && res.length>0){
-      					console.log('The !!');
-      					return false;
-      				}
-      				else 
-      					return true;
+      			var validPhone = _.find(req.body.contact, function(contact){
+              console.log('The %%%%%%%%', typeof(contact));
+      				return phone(contact);
+      				// console.log('The res is', res);
+      				// if(res && res.length>0){
+      				// 	console.log('The !!');
+      				// 	return false;
+      				// }
+      				// else 
+          //       res.status(417);
       			});
 
-      			console.log('The ##########', validPhone);
+      			console.log('The ##########', JSON.stringify(validPhone));
       			console.log('The dups are::::', duplicate);
       			if(duplicate || validPhone){
-      				res.status(401).send('Invalid records.');
+      				res.status(417).send('Invalid records.');
       			}
       			else {
 

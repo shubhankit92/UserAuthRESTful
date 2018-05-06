@@ -5,12 +5,22 @@ var User = require('../User');
 var roles = require('../role');
 var jwt = require('jsonwebtoken');
 var _ = require('underscore');
-var phone = require('phone');
+// var phone = require('phone');
 
 function getCookie ( src, name ) {
   var value = "; " + src;
   var parts = value.split("; " + name + "=");
   if (parts.length == 2) return parts.pop().split(";").shift();
+}
+
+function phone (number){
+	console.log('$$$$$$$$', number[0],number[1],number[2] )
+	if(number[0]== "+" &&number[1]== "9" &&number[2]== "1" ){
+		return false;
+	}
+	else {
+		return true;
+	}
 }
 
 router.use(function(req, res, next){
@@ -56,21 +66,25 @@ router.post('/:username', function(req, res, next) {
       				})
       			});
 
-      			var validPhone = await _.find(req.body.contact, async function(contact){
-      				var res = await phone(contact);
-      				console.log('The res is', res);
-      				if(res && res.length>0){
-      					console.log('The !!');
-      					return false;
-      				}
-      				else 
-      					return true;
+      			var validPhone = _.find(req.body.contact, function(contact){
+      				var val = phone(contact);
+      				console.log('The val', val);
+      				return val;
+      				// console.log('The res is', resp);
+      				// if(resp && resp.length>0){
+      				// 	console.log('The ****');
+      				// 	return false;
+      				// }
+      				// else if(resp || resp.length==0){
+      				// 	console.log('The ))');
+      				// 	return true;
+      				// }
       			});
 
       			console.log('The ##########', validPhone);
       			console.log('The dups are::::', duplicate);
       			if(duplicate || validPhone){
-      				res.status(401).send('Invalid records.');
+      				res.status(417).send('Invalid records.');
       			}
       			else {
 
