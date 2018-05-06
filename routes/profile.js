@@ -36,11 +36,19 @@ router.get('/:username', function(req, res, next) {
         });
         if(obj && obj.role === 'ADMIN'){
           User.findOne({username: req.params.username}, function(err, result){
-            if(query.page){
-              res.send({pageNumber: query.page,MaxContactNumberPerpage: 10, contactDetails: result.contactNumber.slice((query.page-1)*10, (query.page-1)*10 + 10)});
+            if(err){
+              res.send(err);
             }
-            else
-              res.send({pageNumber: 1,MaxContactNumberPerpage: 10,contactDetails: result.contactNumber.slice(0, 10)});
+            if(result){
+              if(query.page){
+                res.send({pageNumber: query.page,MaxContactNumberPerpage: 10, contactDetails: result.contactNumber.slice((query.page-1)*10, (query.page-1)*10 + 10)});
+              }
+              else
+                res.send({pageNumber: 1,MaxContactNumberPerpage: 10,contactDetails: result.contactNumber.slice(0, 10)});
+            }
+            else {
+              res.status(404).send('NOT FOUND');
+            }
           });
         }
         else if(decoded.username === req.params.username){
