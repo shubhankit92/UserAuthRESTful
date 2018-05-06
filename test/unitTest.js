@@ -1,6 +1,5 @@
 let mongoose = require("mongoose");
 let User = require('../User');
-
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 let server = require('../app');
@@ -13,151 +12,146 @@ chai.use(chaiHttp);
 
 describe('Users', () => {
   describe('CRUD Check', () => {
-      it('ADMIN role user can access its own details', (done) => {
-            chai.request(server)
-            .get('/profile/ankunath')
-            .set('cookie', Admin_access_token)
-            .end((err, res) => {
-                res.should.have.status(200);
-                res.body.should.be.a('object');
-              done();
-            });
+    it('ADMIN role user can access its own details', (done) => {
+      chai.request(server)
+      .get('/profile/ankunath')
+      .set('cookie', Admin_access_token)
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.body.should.be.a('object');
+        done();
       });
+    });
 
-      it('ADMIN role user can access other user details', (done) => {
-            chai.request(server)
-            .get('/profile/simpleuser')
-            .set('cookie', Admin_access_token)
-            .end((err, res) => {
-                res.should.have.status(200);
-                res.body.should.be.a('object');
-              done();
-            });
+    it('ADMIN role user can access other user details', (done) => {
+      chai.request(server)
+      .get('/profile/simpleuser')
+      .set('cookie', Admin_access_token)
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.body.should.be.a('object');
+        done();
       });
+    });
 
-      it('NON-ADMIN role user can access its own details', (done) => {
-            chai.request(server)
-            .get('/profile/abc')
-            .set('cookie', access_token)
-            .end((err, res) => {
-                res.should.have.status(200);
-                res.body.should.be.a('object');
-              done();
-            });
+    it('NON-ADMIN role user can access its own details', (done) => {
+      chai.request(server)
+      .get('/profile/abc')
+      .set('cookie', access_token)
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.body.should.be.a('object');
+        done();
       });
+    });
 
-      it('NON-ADMIN role user can not access other user details', (done) => {
-            chai.request(server)
-            .get('/profile/simpleuser')
-            .set('cookie', access_token)
-            .end((err, res) => {
-                res.should.have.status(401);
-              done();
-            });
+    it('NON-ADMIN role user can not access other user details', (done) => {
+      chai.request(server)
+      .get('/profile/simpleuser')
+      .set('cookie', access_token)
+      .end((err, res) => {
+        res.should.have.status(401);
+        done();
       });
+    });
   });
   describe('Make Admin Check ', () => {
-      it('ADMIN user can assign other users as ADMIN', (done) => {
-        let updatedUser = {
-            makeAdmin: true
-        }
-            chai.request(server)
-            .post('/updateUser/userToBeAdmin')
-            .set('cookie', Admin_access_token)
-            .send(updatedUser)
-            .end((err, res) => {
-                res.should.have.status(200);
-              done();
-            });
+    it('ADMIN user can assign other users as ADMIN', (done) => {
+      let updatedUser = {
+          makeAdmin: true
+      }
+      chai.request(server)
+      .post('/updateUser/userToBeAdmin')
+      .set('cookie', Admin_access_token)
+      .send(updatedUser)
+      .end((err, res) => {
+        res.should.have.status(200);
+        done();
       });
+    });
 
-      it('NON-ADMIN user can not assign other users as ADMIN', (done) => {
-        let updatedUser = {
-            makeAdmin: true
-        }
-            chai.request(server)
-            .post('/updateUser/userToBeAdmin')
-            .set('cookie', access_token)
-            .send(updatedUser)
-            .end((err, res) => {
-                res.should.have.status(401);
-              done();
-            });
+    it('NON-ADMIN user can not assign other users as ADMIN', (done) => {
+      let updatedUser = {
+        makeAdmin: true
+      }
+      chai.request(server)
+      .post('/updateUser/userToBeAdmin')
+      .set('cookie', access_token)
+      .send(updatedUser)
+      .end((err, res) => {
+        res.should.have.status(401);
+        done();
       });
+    });
   });
-
   describe('Phone Number Check ', () => {
-
-      it('User can add a phone number', (done) => {
-        let updatedUser = {
-            contact: ["+919999999991"]
-        }
-            chai.request(server)
-            .post('/updateUser/abc')
-            .set('cookie', access_token)
-            .send(updatedUser)
-            .end((err, res) => {
-                res.should.have.status(200);
-              done();
-            });
+    it('User can add a phone number', (done) => {
+      let updatedUser = {
+        contact: ["+919999999991"]
+      }
+      chai.request(server)
+      .post('/updateUser/abc')
+      .set('cookie', access_token)
+      .send(updatedUser)
+      .end((err, res) => {
+        res.should.have.status(200);
+        done();
       });
+    });
 
-      it('Duplicate Number are not allowed', (done) => {
-        let updatedUser = {
-            contact: ["+919999999991"]
-        }
-            chai.request(server)
-            .post('/updateUser/abc')
-            .set('cookie', access_token)
-            .send(updatedUser)
-            .end((err, res) => {
-                res.should.have.status(417);
-              done();
-            });
+    it('Duplicate Number are not allowed', (done) => {
+      let updatedUser = {
+        contact: ["+919999999991"]
+      }
+      chai.request(server)
+      .post('/updateUser/abc')
+      .set('cookie', access_token)
+      .send(updatedUser)
+      .end((err, res) => {
+        res.should.have.status(417);
+        done();
       });
+    });
 
-      it('Phone Number should be validated', (done) => {
-        let updatedUser = {
-            contact: ["1234"]
-        }
-            chai.request(server)
-            .post('/updateUser/abc')
-            .set('cookie', access_token)
-            .send(updatedUser)
-            .end((err, res) => {
-                res.should.have.status(417);
-              done();
-            });
+    it('Phone Number should be validated', (done) => {
+      let updatedUser = {
+        contact: ["1234"]
+      }
+      chai.request(server)
+      .post('/updateUser/abc')
+      .set('cookie', access_token)
+      .send(updatedUser)
+      .end((err, res) => {
+        res.should.have.status(417);
+        done();
       });
-
-      it('User can update his/her phone number', (done) => {
-        let updatedUser = {
-          oldContact: "+919999999991",
-          contact: ["+918888888888"]
-        }
-            chai.request(server)
-            .post('/updateNumber/abc')
-            .set('cookie', access_token)
-            .send(updatedUser)
-            .end((err, res) => {
-                res.should.have.status(200);
-              done();
-            });
+    });
+    it('User can update his/her phone number', (done) => {
+      let updatedUser = {
+        oldContact: "+919999999991",
+        contact: ["+918888888888"]
+      }
+      chai.request(server)
+      .post('/updateNumber/abc')
+      .set('cookie', access_token)
+      .send(updatedUser)
+      .end((err, res) => {
+        res.should.have.status(200);
+        done();
       });
-
-      it('User can delete his/her phone number', (done) => {
-        let updatedUser = {
-            contact: "+918888888888"
-        }
-            chai.request(server)
-            .delete('/updateNumber/abc')
-            .set('cookie', access_token)
-            .send(updatedUser)
-            .end((err, res) => {
-                res.should.have.status(200);
-              done();
-            });
+    });
+    it('User can delete his/her phone number', (done) => {
+      let updatedUser = {
+        contact: "+918888888888"
+      }
+      chai.request(server)
+      .delete('/updateNumber/abc')
+      .set('cookie', access_token)
+      .send(updatedUser)
+      .end((err, res) => {
+        res.should.have.status(200);
+        done();
       });
+    });
   });
- 
 });

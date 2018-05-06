@@ -5,10 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
 
-
-
+//Importing all the routes
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var createUser = require('./routes/create');
 var loginRouter = require('./routes/login');
 var signupRouter = require('./routes/signup');
@@ -17,14 +15,11 @@ var loginUser = require('./routes/loginUser');
 var updateUser = require('./routes/updateUser');
 var updateNumber = require('./routes/updateNumber');
 
-
-
-
+//Initializing our app
 var app = express();
 mongoose.connect('mongodb://localhost:27017/iii');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'pug');
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
@@ -34,15 +29,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/public')));
 
-
+//log routes
 app.use('/login', loginRouter);
 app.use('/signup', signupRouter);
 
-
-
+//other routes
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
 app.use('/create', createUser);
 app.use('/loginUser', loginUser);
 app.use('/updateUser', updateUser);

@@ -14,7 +14,6 @@ function getCookie ( src, name ) {
 
 router.use(function(req, res, next){
 	var userData = req.body;
-  console.log('The headers ', req.headers);
 	var token = getCookie(req.headers.cookie, 'access_token');
   	jwt.verify(token, 'iiiConsulting', function(err, decoded) {
       if (err) {
@@ -24,19 +23,11 @@ router.use(function(req, res, next){
       }
     });
 });
-/* GET home page. */
+/* GET profile page. */
 router.get('/:username', function(req, res, next) {
-  // console.log('The name', req.params.username)
-  // if(decoded.role === 'ADMIN' || decoded.username === req.params.username){
-  //     		next();
-  //     	}
-  // // res.render('/layout/' + req.params.username );
-  // res.send('suzess');
   var query = require('url').parse(req.url,true).query;
 	var token = getCookie(req.headers.cookie, 'access_token');
   	jwt.verify(token, 'iiiConsulting', function(err, decoded) {
-      console.log('The values are', decoded);
-      console.log('The values are', req.params);
       if (err) {
         res.status(403).send('Not authenticated.');
       } else {
